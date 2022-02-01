@@ -13,6 +13,11 @@ public enum ArasaacEndpoint {
 }
 
 extension ArasaacEndpoint: Endpoint {
+
+    public var baseURL: URL {
+        URL(string: "https://api.arasaac.org/api")!
+    }
+    
     public var path: String {
         switch self {
         case .searchPictogram(let query):

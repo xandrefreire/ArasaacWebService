@@ -7,6 +7,7 @@
 import Foundation
 
 public protocol Endpoint {
+    var baseURL: URL { get }
     var method: HTTPMethod { get }
     var path: String { get}
     var parameters: [String: String] { get }
@@ -23,7 +24,7 @@ extension Endpoint {
 }
 
 extension Endpoint {
-    func request(with baseURL: URL, adding parameters: [String : String]) -> URLRequest {
+    func request(adding parameters: [String : String]) -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
 
         var newParameters = self.parameters

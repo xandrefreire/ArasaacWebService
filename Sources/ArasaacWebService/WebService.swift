@@ -1,5 +1,5 @@
 import Combine
 
 public protocol WebService {
-    func load<Model: Decodable>(_ type: Model.Type, from _endpoint: Endpoint) -> AnyPublisher<Model, Error>
+    func load<Model: Decodable>(_ type: Model.Type, from endpoint: Endpoint) async throws-> Model
 }

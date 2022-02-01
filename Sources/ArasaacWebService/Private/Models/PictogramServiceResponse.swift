@@ -8,18 +8,18 @@
 import Foundation
 
 public struct PictogramServiceResponse: Decodable {
-    let id: Int
-    let keywords: [Keyword]
-    let schematic: Bool
-    let sex: Bool
-    let violence: Bool
-    let created: String
-    let lastUpdated: String
-    let downloads: Int
-    let categories: [String]
-    let synsets: [String]
-    let tags: [String]
-    let description: String?
+    public let id: Int
+    public let keywords: [Keyword]
+    public let schematic: Bool
+    public let sex: Bool
+    public let violence: Bool
+    public let created: String
+    public let lastUpdated: String
+    public let downloads: Int
+    public let categories: [String]
+    public let synsets: [String]
+    public let tags: [String]
+    public let description: String?
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
@@ -30,15 +30,15 @@ public struct PictogramServiceResponse: Decodable {
 }
 
 public struct Keyword: Decodable {
-    let idKeyword: Int?
-    let keyword: String
-    let plural: String?
-    let idLocution: String?
-    let meaning: String?
-    let type: KeywordType
-    let lse: Int?
+    public let idKeyword: Int?
+    public let keyword: String
+    public let plural: String?
+    public let idLocution: String?
+    public let meaning: String?
+    public let type: KeywordType
+    public let lse: Int?
 
-    enum KeywordType: Int, Decodable {
+    public enum KeywordType: Int, Decodable {
         case person = 1
         case name
         case verb

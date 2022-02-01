@@ -15,34 +15,36 @@ enum ArasaacWebServiceError: Error {
 final public class ArasaacWebService: WebService {
     private let urlSession: URLSession
     private let decoder = JSONDecoder()
-    private let baseURL = URL(string: "https://api.arasaac.org/api")!
+    private let cache = NSCache<AnyObject, AnyObject>()
 
     public init(urlSession: URLSession = URLSession(configuration: .default)) {
         self.urlSession = urlSession
     }
 
+    public func load<Model: Decodable>(_ type: Model.Type, from endpoint: Endpoint) async throws -> Model {
+        let request = endpoint.request(adding: [:])
+        if let url = request.url,
+           let data = cache.object(forKey: url as AnyObject) as? NSData {
+            return try decoder.decode(type, from: Data(referencing: data))
+        }
 
-    public func load<Model: Decodable>(_ type: Model.Type, from endpoint: Endpoint) -> AnyPublisher<Model, Error> {
-        let request = endpoint.request(with: baseURL, adding: endpoint.parameters)
-        let decoder = self.decoder
+        let (data, response) = try await urlSession.data(for: request)
 
-        return urlSession.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    fatalError("Unsupported protocol")
-                }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            fatalError("Unsupported protocol")
+        }
 
-                if 200 ..< 300 ~= httpResponse.statusCode {
-                    return data
-                } else {
-                    throw ArasaacWebServiceError.badStatus(
-                        code: httpResponse.statusCode,
-                        payload: data
-                    )
-                }
-            }
-            .decode(type: type, decoder: decoder)
-            .eraseToAnyPublisher()
+        guard 200..<300 ~= httpResponse.statusCode else {
+            throw ArasaacWebServiceError.badStatus(
+                code: httpResponse.statusCode,
+                payload: data
+            )
+        }
 
+        if let url = request.url {
+            cache.setObject(data as AnyObject, forKey: url as AnyObject)
+        }
+
+        return try decoder.decode(type, from: data)
     }
 }
