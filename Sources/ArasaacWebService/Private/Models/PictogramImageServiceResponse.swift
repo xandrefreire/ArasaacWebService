@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PictogramImage: Decodable {
+public struct PictogramImageServiceResponse: Decodable {
     public let url: URL
 
     enum CodingKeys: String, CodingKey {
